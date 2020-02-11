@@ -1,21 +1,24 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-
 
     def _hash(self, key):
         '''
@@ -25,15 +28,13 @@ class HashTable:
         '''
         return hash(key)
 
+    # def _hash_djb2(self, key):
+    #     '''
+    #     Hash an arbitrary key using DJB2 hash
 
-    def _hash_djb2(self, key):
-        '''
-        Hash an arbitrary key using DJB2 hash
-
-        OPTIONAL STRETCH: Research and implement DJB2
-        '''
-        pass
-
+    #     OPTIONAL STRETCH: Research and implement DJB2
+    #     '''
+    #     pass
 
     def _hash_mod(self, key):
         '''
@@ -41,7 +42,6 @@ class HashTable:
         within the storage capacity of the hash table.
         '''
         return self._hash(key) % self.capacity
-
 
     def insert(self, key, value):
         '''
@@ -51,9 +51,14 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
 
+        if self.storage[index] is not None:
+            print(f"Warning: Collision occurred at {index}")
+        else:
+            self.storage[index] = (key, value)
 
+        return
 
     def remove(self, key):
         '''
@@ -63,8 +68,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
 
+        if self.storage[index] is not None:
+            if self.storage[index][0] == key:
+                self.storage[index] = None
+            else:
+                print(f"Warning: Collision occurred at {index}")
+        else:
+            print(f"Warning: Key not found")
 
     def retrieve(self, key):
         '''
@@ -74,8 +86,15 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        index = self._hash_mod(key)
 
+        if self.storage[index] is not None:
+            if self.storage[index][0] == key:
+                return self.storage[index][1]
+            else:
+                print(f"Warning: Collision occurred at {index}")
+        else:
+            None
 
     def resize(self):
         '''
@@ -84,8 +103,12 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        old_storage = self.storage
+        self.capacity *= 2
+        self.storage = [None] * self.capacity
 
+        for item in old_storage:
+            self.insert(item[0], item[1])
 
 
 if __name__ == "__main__":
