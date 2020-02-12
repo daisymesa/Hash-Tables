@@ -55,10 +55,22 @@ class HashTable:
 
         if self.storage[index] is not None:
             print(f"Warning: Collision occurred at {index}")
-        else:
-            self.storage[index] = (key, value)
 
-        return
+            current = self.storage[index]
+            # loop through the list to see if there is a match
+            while current is not None:
+
+                if self.storage[index].key == key:
+                    # if there is a match, value must be overwritten
+                    self.storage[index].value = value
+                current = current.next
+
+            new_node = LinkedPair(key, value)
+            self.storage[index].next = new_node
+
+        else:
+            # self.storage[index] = (key, value)
+            self.storage[index] = LinkedPair(key, value)
 
     def remove(self, key):
         '''
@@ -71,6 +83,7 @@ class HashTable:
         index = self._hash_mod(key)
 
         if self.storage[index] is not None:
+
             if self.storage[index][0] == key:
                 self.storage[index] = None
             else:
@@ -94,7 +107,7 @@ class HashTable:
             else:
                 print(f"Warning: Collision occurred at {index}")
         else:
-            None
+            return None
 
     def resize(self):
         '''
@@ -109,6 +122,8 @@ class HashTable:
 
         for item in old_storage:
             self.insert(item[0], item[1])
+
+        return
 
 
 if __name__ == "__main__":
