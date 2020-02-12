@@ -52,10 +52,7 @@ class HashTable:
         Fill this in.
         '''
         index = self._hash_mod(key)
-
         if self.storage[index] is not None:
-            print(f"Warning: Collision occurred at {index}")
-
             current = self.storage[index]
             # loop through the list to see if there is a match
             while current is not None:
@@ -63,14 +60,19 @@ class HashTable:
                 if self.storage[index].key == key:
                     # if there is a match, value must be overwritten
                     self.storage[index].value = value
-                current = current.next
+                    break
 
-            new_node = LinkedPair(key, value)
-            self.storage[index].next = new_node
+                current = current.next
+            else:
+                new_node = LinkedPair(key, value)
+                new_node.next = self.storage[index]
+                self.storage[index] = new_node
 
         else:
             # self.storage[index] = (key, value)
             self.storage[index] = LinkedPair(key, value)
+
+ ####################
 
     def remove(self, key):
         '''
@@ -82,14 +84,25 @@ class HashTable:
         '''
         index = self._hash_mod(key)
 
-        if self.storage[index] is not None:
+        # if self.storage[index] is not None:
 
-            if self.storage[index][0] == key:
-                self.storage[index] = None
+        #     if self.storage[index][0] == key:
+        #         self.storage[index] = None
+        #     else:
+        #         print(f"Warning: Collision occurred at {index}")
+        # else:
+        #     print(f"Warning: Key not found")
+        if self.storage[index] is not None:
+            if self.storage[index].key == key:
+                self.storage[index].value = None
             else:
-                print(f"Warning: Collision occurred at {index}")
+                current = self.storage[index].next
+                while current is not None:
+                    if current.key == key:
+                        current.value = None
+                    current = current.next
         else:
-            print(f"Warning: Key not found")
+            print("Warning: Key is not found")
 
     def retrieve(self, key):
         '''
@@ -101,11 +114,23 @@ class HashTable:
         '''
         index = self._hash_mod(key)
 
+        # if self.storage[index] is not None:
+        #     if self.storage[index][0] == key:
+        #         # return self.storage[index][1]
+        #         return LinkedPair(key, value)
+        #     else:
+        #         print(f"Warning: Collision occurred at {index}")
+        # else:
+        #     return None
         if self.storage[index] is not None:
-            if self.storage[index][0] == key:
-                return self.storage[index][1]
+            if self.storage[index].key == key:
+                return self.storage[index].value
             else:
-                print(f"Warning: Collision occurred at {index}")
+                current = self.storage[index].next
+                while current is not None:
+                    if current.key == key:
+                        return current.value
+                    current = current.next
         else:
             return None
 
@@ -121,8 +146,15 @@ class HashTable:
         self.storage = [None] * self.capacity
 
         for item in old_storage:
-            self.insert(item[0], item[1])
-
+            # self.insert(item[0], item[1])
+            if item is not None and item.next is None:
+                self.insert(item.key, item.value)
+            if item is not None and item.next is not None:
+                current = item
+                while current.next is not None:
+                    self.insert(current.key, current.value)
+                    current = current.next
+                self.insert(current.key, current.value)
         return
 
 
